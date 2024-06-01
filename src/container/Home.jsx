@@ -49,12 +49,12 @@ const Home = () => {
 
       <div className='flex-1 min-h-screen max-h-screen h-full overflow-y-auto overflow-x-hidden flex flex-col items-start justify-start px-4 md:px-12 py-4 md:py-12'>
         <div className='w-full flex items-center justify-between gap-3'>
-          <div className='bg-secondary w-full flex items-center justify-center gap-2 px-4 py-3 rounded-md'>
+        <div className='bg-secondary w-full flex items-center justify-center gap-2 px-4 py-1.5 rounded-md'>
             <FaSearchengin className='text-primaryText text-2xl'/>
             <input 
               type="text" 
               placeholder='Search...' 
-              className='flex-1 px-4 py-1 text-xl bg-transparent outline-none border-none text-primaryText placeholder:text-gray-600'
+              className='flex-1 px-4 py-1 text-md bg-transparent outline-none border-none text-primaryText placeholder:text-gray-600'
             />
           </div>
 
