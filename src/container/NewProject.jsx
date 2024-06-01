@@ -3,7 +3,7 @@ import SplitPane from 'react-split-pane'
 import "../index.css"
 import { FaChevronDown, FaCss3, FaHtml5, FaJs } from 'react-icons/fa6'
 import { FcSettings } from 'react-icons/fc'
-import CodeMirror from '@uiw/react-codemirror'
+import CodeMirror, {EditorView, EditorSelection} from '@uiw/react-codemirror'
 import { javascript } from '@codemirror/lang-javascript'
 import { AnimatePresence, motion } from 'framer-motion'
 import { MdCheck, MdEdit } from 'react-icons/md'
@@ -150,10 +150,13 @@ const NewProject = () => {
                 <div className='h-full w-full px-2'>
                   <CodeMirror
                     value={html}
-                    height='600px'
-                    extensions={[javascript({jsx:true})]}
+                    height='100%'
+                    maxHeight='100%'
+                    style={{height:"100%", maxHeight:"95%"}}
+                    extensions={[javascript({jsx:true}), EditorView.lineWrapping]}
                     onChange={(value, viewUpdate)=> setHtml(value)}
                     theme={"dark"}
+                    selection={EditorSelection.cursor(0, 0)}
                   />
                 </div>
               </div>
@@ -173,8 +176,10 @@ const NewProject = () => {
                 <div className='h-full w-full px-2'>
                   <CodeMirror
                     value={css}
-                    height='600px'
-                    extensions={[javascript({jsx:true})]}
+                    height='100%'
+                    maxHeight='100%'
+                    style={{height:"100%", maxHeight:"95%"}}
+                    extensions={[javascript({jsx:true}), EditorView.lineWrapping]}
                     onChange={(value, viewUpdate)=> setCss(value)}
                     theme={"dark"}
                   />
@@ -196,8 +201,10 @@ const NewProject = () => {
                 <div className='h-full w-full px-2'>
                   <CodeMirror
                     value={js}
-                    height='600px'
-                    extensions={[javascript({jsx:true})]}
+                    height='100%'
+                    maxHeight='100%'
+                    style={{height:"100%", maxHeight:"95%"}}
+                    extensions={[javascript({jsx:true}), EditorView.lineWrapping]}
                     onChange={(value, viewUpdate)=> setJs(value)}
                     theme={"dark"}
                   />
