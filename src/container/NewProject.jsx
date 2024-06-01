@@ -9,6 +9,9 @@ import { AnimatePresence, motion } from 'framer-motion'
 import { MdCheck, MdEdit } from 'react-icons/md'
 import { useSelector } from 'react-redux'
 import { UserProfileDetails } from '../components'
+import { doc, setDoc } from 'firebase/firestore'
+import { db } from '../config/firebase.config'
+import { Alert } from '../components'
 
 const NewProject = () => {
   const [html, setHtml] = useState('<body>\n  <h1 class="hello">\n    Hello\n  </h1>\n</body>')
@@ -18,6 +21,7 @@ const NewProject = () => {
   const [isTitleEditable, setIsTitleEditable] = useState(true)
   const [isEditing, setIsEditing] = useState(false)
   const [title, setTitle] = useState('Untitled')
+  const [ alert , setAlert ] = useState(false)
 
   const user = useSelector(state => state.user?.user)
 
@@ -39,9 +43,37 @@ const NewProject = () => {
     runCode()
   }, [html, css, js])
 
+  const saveCode = async() => {
+    const id = `${Date.now()}${Math.floor(Math.random() * 1000)}`
+    const _doc = {
+      id: id,
+      title: title,
+      html: html,
+      css: css,
+      js: js,
+      output: output,
+      user: user
+    }
+
+    await setDoc(doc(db, 'Projects', id), _doc).then((res)=> {
+      setAlert(true)
+      setInterval(()=> {
+        setAlert(false)
+      }, 3000)
+    }).catch((err)=> {
+      console.log(err)
+    })
+  }
+
   return (
     <>
       <div className='w-screen h-screen flex flex-col items-start justify-start overflow-hidden'>
+        <AnimatePresence>
+          {alert && (
+            <Alert status="success" alertMsg="Project Saved Successfully!" />
+          )}
+        </AnimatePresence>
+
         <div className='h-[8%] w-full flex items-center justify-between px-12 py-4'>
           <div className='flex items-center justify-center gap-4'>
             <img src='/logo.png' alt='logo' className='object-contain w-24 h-auto'/>
@@ -88,10 +120,10 @@ const NewProject = () => {
               </div>
             </div>
           </div>
-          
+
           {user && (
               <div className='flex items-center justify-center gap-3'>
-                <motion.button whileTap={{scale:0.9}} className='px-3 py-1.5 bg-primaryText cursor-pointer text-sm text-primary font-medium rounded-lg'>
+                <motion.button onClick={saveCode} whileTap={{scale:0.9}} className='px-3 py-1.5 bg-primaryText cursor-pointer text-sm text-primary font-medium rounded-lg'>
                   Save
                 </motion.button>
 
