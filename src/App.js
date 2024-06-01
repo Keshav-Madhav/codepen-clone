@@ -4,17 +4,21 @@ import { Home } from './container'
 import { auth, db } from './config/firebase.config'
 import { doc, setDoc } from 'firebase/firestore'
 import { Spinner } from './components'
+import { useDispatch } from 'react-redux'
+import { SET_USER } from './context/actions/userActions'
 
 const App = () => {
   const navigate = useNavigate()
-  const [isloading, setIsLoading] = useState(true)
+  const [isloading, setIsLoading] = useState(true);
+  const dispatch = useDispatch()
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
       if (user) {
         console.log(user.providerData[0])
         setDoc(doc(db, "users", user.uid), user.providerData[0]).then(() => {
-          //
+          dispatch(SET_USER(user.providerData[0]))
+          navigate("/home/projects", {replace: true})
         }).catch((error) => {
           console.error("Error adding document: ", error)
         })
