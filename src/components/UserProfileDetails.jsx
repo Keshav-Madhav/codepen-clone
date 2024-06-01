@@ -10,7 +10,7 @@ const UserProfileDetails = ({user}) => {
 
   return (
     <div className='flex items-center justify-center gap-4 relative'>
-      <div className='w-14 h-14 flex items-center justify-center rounded-lg overflow-hidden cursor-pointer bg-emerald-500'>
+      <div className='w-11 h-11 flex items-center justify-center rounded-lg overflow-hidden cursor-pointer bg-emerald-500'>
         {user.photoURL ? (
           <motion.img whileHover={{scale: 1.2}} src={user.photoURL} alt={user.displayName} className='object-cover w-full h-full' referrerPolicy='no-policy'/>
         ):(
@@ -18,7 +18,7 @@ const UserProfileDetails = ({user}) => {
         )}
       </div>   
 
-      <motion.div onClick={()=> setIsMenuOpen(!isMenuOpen)} whileTap={{scale: 0.9}} className='px-4 py-4 rounded-md flex items-center justify-center bg-secondary cursor-pointer'>
+      <motion.div onClick={()=> setIsMenuOpen(!isMenuOpen)} whileTap={{scale: 0.9}} className='px-3 py-3 rounded-md flex items-center justify-center bg-secondary cursor-pointer'>
         <FaChevronDown className='text-primaryText'/>
       </motion.div>
 

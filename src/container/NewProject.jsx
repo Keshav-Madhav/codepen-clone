@@ -5,12 +5,21 @@ import { FaChevronDown, FaCss3, FaHtml5, FaJs } from 'react-icons/fa6'
 import { FcSettings } from 'react-icons/fc'
 import CodeMirror from '@uiw/react-codemirror'
 import { javascript } from '@codemirror/lang-javascript'
+import { AnimatePresence, motion } from 'framer-motion'
+import { MdCheck, MdEdit } from 'react-icons/md'
+import { useSelector } from 'react-redux'
+import { UserProfileDetails } from '../components'
 
 const NewProject = () => {
   const [html, setHtml] = useState('<body>\n  <h1 class="hello">\n    Hello\n  </h1>\n</body>')
   const [css, setCss] = useState('body{\n  background-color: #181818\n} \n\n.hello{\n  color: #ffffff\n}')
   const [js, setJs] = useState('setTimeout(() => {\n  document.querySelector(".hello").style.color = "red"\n}, 2000) \n\nsetTimeout(() => {\n  document.querySelector(".hello").style.color = "green"\n}, 4000)')
   const [output, setOutput] = useState('')
+  const [isTitleEditable, setIsTitleEditable] = useState(true)
+  const [isEditing, setIsEditing] = useState(false)
+  const [title, setTitle] = useState('Untitled')
+
+  const user = useSelector(state => state.user?.user)
 
   const runCode = () => {
     const combinedCode = `
@@ -33,90 +42,145 @@ const NewProject = () => {
   return (
     <>
       <div className='w-screen h-screen flex flex-col items-start justify-start overflow-hidden'>
+        <div className='h-[8%] w-full flex items-center justify-between px-12 py-4'>
+          <div className='flex items-center justify-center gap-4'>
+            <img src='/logo.png' alt='logo' className='object-contain w-24 h-auto'/>
 
-        <div className='h-full'>
-          <div className='h-full relative top-[8%]'>
-            <SplitPane split="horizontal" minSize="10%" maxSize="80%" initialSize="40%" className='w-screen height-[90%]'>
-              <SplitPane initialSize="50%" minSize="200" maxSize="80%" className='border-b border-white/50'>
-                <div minSize="200" maxSize="60%" className='w-full h-full flex flex-col items-start justify-start border-r border-white/50'>
-                  <div className='w-full flex items-center justify-between'>
-                    <div className='bg-secondary px-4 py-2 border-t-4 border-t-gray-500 flex items-center justify-center gap-2'>
-                      <FaHtml5 className="text-xl text-red-500"/>
-                      <p className='text-primaryText font-semibold'>HTML</p>
-                    </div>
-                    
-                    <div className='cursor-pointer flex items-center justify-center gap-4 px-4'>
-                      <FcSettings className='text-xl'/>
-                      <FaChevronDown className='text-xl text-primaryText'/>
-                    </div>
-                  </div>
-                  <div className='h-full w-full px-2'>
-                    <CodeMirror
-                      value={html}
-                      height='600px'
-                      extensions={[javascript({jsx:true})]}
-                      onChange={(value, viewUpdate)=> setHtml(value)}
-                      theme={"dark"}
+            <div className='flex items-start justify-start flex-col'>
+              <div className='flex items-center justify-start gap-2'>
+                <AnimatePresence>
+                  {isTitleEditable && isEditing ? (
+                    <motion.input 
+                      key='input'
+                      type="text" 
+                      placeholder='Untitled Project'
+                      className='max-w-fit px-2 py-1 rounded-md bg-transparent text-primaryText text-sm outline-none focus:bg-secondary'
+                      value={title}
+                      onChange={(e)=> setTitle(e.target.value)}
                     />
+                  ):(
+                    <motion.p key="titleLabel" className='px-2 py1 text-white text-sm'>{title}</motion.p>
+                  )}
+                </AnimatePresence>
+
+                {isTitleEditable && (
+                  <AnimatePresence>
+                    {isEditing ? (
+                      <motion.div key="MdCheck" whileTap={{scale: 0.9}} className='cursor-pointer' onClick={()=> setIsEditing(false)}>
+                        <MdCheck className='text-emerald-500 text-md'/>
+                      </motion.div>
+                    ):(
+                      <motion.div key="MdEdit" whileTap={{scale: 0.9}} className='cursor-pointer' onClick={()=> setIsEditing(true)}>
+                        <MdEdit className='text-primaryText text-md'/>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                )}
+              </div>
+
+              <div className='flex items-center justify-start gap-2 px-2'>
+                <p className='text-primaryText text-xs'>
+                  {user?.displayName || user?.email.split('@')[0] || "Guest"}
+                </p>
+                <motion.p whileTap={{scale:0.9}} className='text-[10px] bg-emerald-500 rounded-sm px-1 pt-[1px] text-primary font-medium cursor-pointer'>
+                  + Follow
+                </motion.p>
+              </div>
+            </div>
+          </div>
+          
+          {user && (
+              <div className='flex items-center justify-center gap-3'>
+                <motion.button whileTap={{scale:0.9}} className='px-3 py-1.5 bg-primaryText cursor-pointer text-sm text-primary font-medium rounded-lg'>
+                  Save
+                </motion.button>
+
+                <UserProfileDetails user={user}/>
+              </div>
+            )}
+        </div>
+
+        <div className='h-[92%] relative'>
+          <SplitPane split="horizontal" minSize="10%" maxSize="80%" initialSize="40%" className='w-screen height-[90%]'>
+            <SplitPane initialSize="50%" minSize="200" maxSize="80%" className='border-b border-white/50'>
+              <div minSize="200" maxSize="60%" className='w-full h-full flex flex-col items-start justify-start border-r border-white/50'>
+                <div className='w-full flex items-center justify-between'>
+                  <div className='bg-secondary px-4 py-2 border-t-4 border-t-gray-500 flex items-center justify-center gap-2'>
+                    <FaHtml5 className="text-xl text-red-500"/>
+                    <p className='text-primaryText font-semibold'>HTML</p>
+                  </div>
+                  
+                  <div className='cursor-pointer flex items-center justify-center gap-4 px-4'>
+                    <FcSettings className='text-xl'/>
+                    <FaChevronDown className='text-xl text-primaryText'/>
                   </div>
                 </div>
+                <div className='h-full w-full px-2'>
+                  <CodeMirror
+                    value={html}
+                    height='600px'
+                    extensions={[javascript({jsx:true})]}
+                    onChange={(value, viewUpdate)=> setHtml(value)}
+                    theme={"dark"}
+                  />
+                </div>
+              </div>
 
-                <div minSize="200" maxSize="60%" className='w-full h-full flex flex-col items-start justify-start'>
-                  <div className='w-full flex items-center justify-between'>
-                    <div className='bg-secondary px-4 py-2 border-t-4 border-t-gray-500 flex items-center justify-center gap-2'>
-                      <FaCss3 className="text-xl text-sky-500"/>
-                      <p className='text-primaryText font-semibold'>CSS</p>
-                    </div>
-                    
-                    <div className='cursor-pointer flex items-center justify-center gap-4 px-4'>
-                      <FcSettings className='text-xl'/>
-                      <FaChevronDown className='text-xl text-primaryText'/>
-                    </div>
+              <div minSize="200" maxSize="60%" className='w-full h-full flex flex-col items-start justify-start'>
+                <div className='w-full flex items-center justify-between'>
+                  <div className='bg-secondary px-4 py-2 border-t-4 border-t-gray-500 flex items-center justify-center gap-2'>
+                    <FaCss3 className="text-xl text-sky-500"/>
+                    <p className='text-primaryText font-semibold'>CSS</p>
                   </div>
-                  <div className='h-full w-full px-2'>
-                    <CodeMirror
-                      value={css}
-                      height='600px'
-                      extensions={[javascript({jsx:true})]}
-                      onChange={(value, viewUpdate)=> setCss(value)}
-                      theme={"dark"}
-                    />
+                  
+                  <div className='cursor-pointer flex items-center justify-center gap-4 px-4'>
+                    <FcSettings className='text-xl'/>
+                    <FaChevronDown className='text-xl text-primaryText'/>
                   </div>
                 </div>
+                <div className='h-full w-full px-2'>
+                  <CodeMirror
+                    value={css}
+                    height='600px'
+                    extensions={[javascript({jsx:true})]}
+                    onChange={(value, viewUpdate)=> setCss(value)}
+                    theme={"dark"}
+                  />
+                </div>
+              </div>
 
-                <div minSize="200" maxSize="60%" className='w-full h-full flex flex-col items-start justify-start border-l border-white/50'>
-                  <div className='w-full flex items-center justify-between'>
-                    <div className='bg-secondary px-4 py-2 border-t-4 border-t-gray-500 flex items-center justify-center gap-2'>
-                      <FaJs className="text-xl text-yellow-500"/>
-                      <p className='text-primaryText font-semibold'>JS</p>
-                    </div>
-                    
-                    <div className='cursor-pointer flex items-center justify-center gap-4 px-4'>
-                      <FcSettings className='text-xl'/>
-                      <FaChevronDown className='text-xl text-primaryText'/>
-                    </div>
+              <div minSize="200" maxSize="60%" className='w-full h-full flex flex-col items-start justify-start border-l border-white/50'>
+                <div className='w-full flex items-center justify-between'>
+                  <div className='bg-secondary px-4 py-2 border-t-4 border-t-gray-500 flex items-center justify-center gap-2'>
+                    <FaJs className="text-xl text-yellow-500"/>
+                    <p className='text-primaryText font-semibold'>JS</p>
                   </div>
-                  <div className='h-full w-full px-2'>
-                    <CodeMirror
-                      value={js}
-                      height='600px'
-                      extensions={[javascript({jsx:true})]}
-                      onChange={(value, viewUpdate)=> setJs(value)}
-                      theme={"dark"}
-                    />
+                  
+                  <div className='cursor-pointer flex items-center justify-center gap-4 px-4'>
+                    <FcSettings className='text-xl'/>
+                    <FaChevronDown className='text-xl text-primaryText'/>
                   </div>
                 </div>
-              </SplitPane>
-
-              <div className='' style={{overflow:"hidden", height:"100%"}}>
-                <iframe
-                  srcDoc={output}
-                  title="Running"
-                  style={{width:"100%", height:"100%", border:"none"}}
-                />
+                <div className='h-full w-full px-2'>
+                  <CodeMirror
+                    value={js}
+                    height='600px'
+                    extensions={[javascript({jsx:true})]}
+                    onChange={(value, viewUpdate)=> setJs(value)}
+                    theme={"dark"}
+                  />
+                </div>
               </div>
             </SplitPane>
-          </div>
+
+            <div className='' style={{overflow:"hidden", height:"100%"}}>
+              <iframe
+                srcDoc={output}
+                title="Running"
+                style={{width:"100%", height:"100%", border:"none"}}
+              />
+            </div>
+          </SplitPane>
         </div>
       </div>
     </>
