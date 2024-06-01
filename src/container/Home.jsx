@@ -1,16 +1,17 @@
 import {useState} from 'react'
 import { HiChevronDoubleLeft, HiChevronDoubleRight } from 'react-icons/hi2';
 import { motion } from "framer-motion"
-import { Link } from 'react-router-dom';
+import { Link, Route, Routes } from 'react-router-dom';
 import { MdHome } from 'react-icons/md';
+import { FaSearchengin } from 'react-icons/fa6';
 
 const Home = () => {
   const [isSideMenuOpen, setIsSideMenuOpen] = useState(true);
-  const [user, setUser] = useState("null");
+  const [user, setUser] = useState(null);
 
   return (
     <>
-      <div className={`${!isSideMenuOpen ? "w-2" : "flex-[.2] xl:flex-[.25]"} min-h-screen max-h-screen relative bg-secondary flex flex-col items-center justify-start gap-4 transition-all duration-200 ease-in-out`}>
+      <div className={`${!isSideMenuOpen ? "w-2" : "flex-[.3] xl:flex-[.25] min-w-[11rem]"} min-h-screen max-h-screen relative bg-secondary flex flex-col items-center justify-start gap-4 transition-all duration-200 ease-in-out`}>
         <motion.div whileTap={{scale:.8}} onClick={()=> setIsSideMenuOpen(!isSideMenuOpen)} className='w-8 h-8 bg-secondary rounded-tr-lg rounded-br-lg absolute -right-6 flex items-center justify-center cursor-pointer'>
           {!isSideMenuOpen ? (
             <HiChevronDoubleRight className='text-white text-xl'/>
@@ -43,8 +44,34 @@ const Home = () => {
           )}
       </div>
 
-      <div>
+      <div className='flex-1 min-h-screen max-h-screen h-full overflow-y-auto overflow-x-hidden flex items-start justify-start px-4 md:px-12 py-4 md:py-12'>
+        <div className='w-full flex items-center justify-between gap-3'>
+          <div className='bg-secondary w-full flex items-center justify-center gap-2 px-4 py-3 rounded-md'>
+            <FaSearchengin className='text-primaryText text-2xl'/>
+            <input 
+              type="text" 
+              placeholder='Search...' 
+              className='flex-1 px-4 py-1 text-xl bg-transparent outline-none border-none text-primaryText placeholder:text-gray-600'
+            />
+          </div>
 
+          {user ? (
+            <div></div>
+          ):(
+            <motion.div whileTap={{scale:.9}} className='flex items-center justify-center gap-3'>
+              <Link to="/home/auth" className='bg-emerald-500 px-6 py-2 rounded-md text-white text-lg cursor-pointer hover:bg-emerald-700'>
+                SignUp
+              </Link>
+            </motion.div>
+          )}
+        </div>
+
+        <div className='w-full'>
+          <Routes>
+            <Route path='/*' element={<Projects/>}/>
+            <Route path='/auth' element={<SignUp/>}/>
+          </Routes>
+        </div>
       </div>
     </>
   )
