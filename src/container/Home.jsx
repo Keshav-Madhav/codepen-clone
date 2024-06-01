@@ -1,8 +1,18 @@
-import React from 'react'
+import {useState} from 'react'
 
 const Home = () => {
+  const [isSideMenuOpen, setIsSideMenuOpen] = useState(false);
+
   return (
-    <div>Home</div>
+    <>
+      <div className={`${isSideMenuOpen ? "w-2" : "flex-[.2] xl:flex-[.3]"} min-h-screen max-h-screen relative bg-secondary`}>
+
+      </div>
+
+      <div>
+
+      </div>
+    </>
   )
 }
 
