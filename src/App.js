@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { Navigate, Route, Routes, useNavigate } from 'react-router-dom'
-import { Home } from './container'
+import { Home, NewProject } from './container'
 import { auth, db } from './config/firebase.config'
 import { doc, setDoc } from 'firebase/firestore'
 import { Spinner } from './components'
@@ -18,7 +18,7 @@ const App = () => {
         console.log(user.providerData[0])
         setDoc(doc(db, "users", user.uid), user.providerData[0]).then(() => {
           dispatch(SET_USER(user.providerData[0]))
-          navigate("/home/projects", {replace: true})
+          // navigate("/home/projects", {replace: true})
         }).catch((error) => {
           console.error("Error adding document: ", error)
         })
@@ -43,6 +43,8 @@ const App = () => {
         <div className='w-screen h-screen flex items-start justify-start overflow-hidden'>
           <Routes>
             <Route path='/home/*' element={<Home />} />
+
+            <Route path='/newProject' element={<NewProject/>} />
     
             <Route path='*' element={<Navigate to={"/home"}/>} />
           </Routes>
