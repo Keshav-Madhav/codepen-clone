@@ -35,8 +35,8 @@ const UserAuthInput = ({label, placeholder, isPass, setState, Icon, setEmailStat
         />
 
         {isPass && (
-          <motion.div onClick={()=>setShowPass(!showPass)} whileTap={{scale:0.9}} className="cursor-poniter">
-            {showPass ? (
+          <motion.div onClick={()=>setShowPass(!showPass)} whileTap={{scale:0.9}} className="cursor-pointer">
+            {!showPass ? (
               <FaEye className='text-text555 text-2xl'/>
             ):(
               <FaEyeSlash className='text-text555 text-2xl'/>
