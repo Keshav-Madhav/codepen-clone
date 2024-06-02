@@ -4,15 +4,19 @@ import { motion } from 'framer-motion'
 
 const Projects = () => {
   const projects = useSelector(state => state.projects?.projects)
-  const [filtered, setFiltered] = useState(null)
+  const searchTerm = useSelector(state => state.searchTerm?.searchTerm ? state.searchTerm?.searchTerm : "")
+  const [filtered, setFiltered] = useState(projects)
 
   useEffect(() => {
-    
-  }, [filtered])
+    if (projects && projects.length > 0) {
+      const filteredProjects = projects.filter(project => project.title.toLowerCase().includes(searchTerm.toLowerCase()))
+      setFiltered(filteredProjects)
+    }
+  }, [searchTerm])
 
   return (
     <div className='w-full py-6 flex items-center justify-center gap-4 flex-wrap'>
-      {projects && projects.map((project, index) => (
+      {filtered && filtered.map((project, index) => (
         <ProjectCard key={index} project={project} index={index}/>
       ))}
     </div>
