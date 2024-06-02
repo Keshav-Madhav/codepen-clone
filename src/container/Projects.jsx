@@ -25,7 +25,14 @@ const Projects = () => {
 
 const ProjectCard = ({ project, index }) => {
   return (
-    <motion.div key={index} className='w-full cursor-pointer sm:w-[330px] h-[290px] bg-secondary rounded-md p-3 flex flex-col items-center justify-center gap-3'>
+    <motion.div
+      key={index} 
+      className='w-full cursor-pointer sm:w-[330px] h-[290px] bg-secondary rounded-md p-3 flex flex-col items-center justify-center gap-3'
+      initial={{opacity: 0, y: 50}}
+      animate={{opacity: 1, y: 0}}
+      transition={{duration:0.5, delay: index * 0.1}}
+      exit={{opacity: 0, y: 50}}
+    >
       <div className='bg-primary w-full h-full rounded-md overflow-hidden' style={{overflow:"hidden", height:"100%"}}>
         <iframe
           srcDoc={project.output}
