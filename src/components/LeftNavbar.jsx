@@ -37,7 +37,7 @@ const LeftNavbar = ({user}) => {
             <div className='h-full overflow-y-auto w-full flex flex-col gap-3 pt-4 mt-2'>
               <p className='text-white text-lg'>My Projects</p>
               {projects.filter(project => project.user.email === user.email).map((project, index) => (
-                <Link to={`/project/${project.id}`}>
+                <Link to={`/openProject/${project.id}`}>
                   <div key={index} className='min-h-10 flex items-center justify-center border border-gray-400 rounded-md hover:border-gray-200'>
                     <p className='text-gray-400 text-sm capitalize truncate'>{project.title}</p>
                   </div>

@@ -1,7 +1,9 @@
 import {useEffect, useState} from 'react'
 import { useSelector } from 'react-redux'
 import { motion } from 'framer-motion'
-import { Link } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
+import { FaThumbsDown } from 'react-icons/fa6'
+import { FaThumbsUp } from 'react-icons/fa6'
 
 const Projects = () => {
   const projects = useSelector(state => state.projects?.projects)
@@ -25,25 +27,35 @@ const Projects = () => {
 }
 
 const ProjectCard = ({ project, index }) => {
-  return (
-    <Link to={`/project/${project.id}`} className='h-[48%] sm:w-[360px]'>
-      <motion.div
-        key={index} 
-        className='h-full w-full bg-secondary rounded-md p-3 flex flex-col items-center justify-center gap-3'
-        initial={{opacity: 0, y: 30}}
-        animate={{opacity: 1, y: 0}}
-        exit={{opacity: 0, y: 30}}
-      >
-        <div className='bg-primary w-full h-full rounded-md overflow-hidden' style={{overflow:"hidden", height:"100%"}}>
-          <iframe
-            srcDoc={project.output}
-            title="Running"
-            style={{width:"100%", height:"100%", border:"none", overflow:"hidden"}}
-            className='overflow-hidden w-full h-full object-cover rounded-md'
-          />
-        </div>
+  const navigate = useNavigate()
 
-        <div className='flex items-center justify-start gap-3 w-full'>
+  const handleUpVote = (e) => {
+    e.stopPropagation();
+  }
+  const handleDownVote = (e) => {
+    e.stopPropagation();
+  }
+
+  return (
+    <motion.div
+      key={index} 
+      className='h-[48%] sm:w-[360px] bg-secondary rounded-md p-3 flex flex-col items-center justify-center gap-3 cursor-pointer'
+      initial={{opacity: 0, y: 30}}
+      animate={{opacity: 1, y: 0}}
+      exit={{opacity: 0, y: 30}}
+      onClick={() => navigate(`/home/openProject/${project.id}`)}
+    >
+      <div className='bg-primary w-full h-full rounded-md overflow-hidden' style={{overflow:"hidden", height:"100%"}}>
+        <iframe
+          srcDoc={project.output}
+          title="Running"
+          style={{width:"100%", height:"100%", border:"none", overflow:"hidden"}}
+          className='overflow-hidden w-full h-full object-cover rounded-md'
+        />
+      </div>
+
+      <div className='flex items-center justify-between gap-3 w-full'>
+        <div className='flex items-center justify-start gap-3'>
           <div className='w-11 h-11 flex items-center justify-center rounded-lg overflow-hidden cursor-pointer bg-emerald-500'>
             {project?.user?.photoURL ? (
               <motion.img whileHover={{scale: 1.2}} src={project.user.photoURL} alt={project.user.displayName} className='object-cover w-full h-full' referrerPolicy='no-policy'/>
@@ -59,8 +71,13 @@ const ProjectCard = ({ project, index }) => {
             </p>
           </div>
         </div>
-      </motion.div>
-    </Link>
+
+        <div className='flex items-center justify-start gap-3'>
+          <FaThumbsUp onClick={(e)=>handleUpVote(e)} className='text-white/20 text-xl hover:text-white/30'/>
+          <FaThumbsDown onClick={(e)=>handleDownVote(e)} className='text-white/20 text-xl hover:text-white/30'/>
+        </div>
+      </div>
+    </motion.div>
   )
 }
 

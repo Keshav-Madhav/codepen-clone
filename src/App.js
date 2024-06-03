@@ -7,6 +7,7 @@ import { Spinner } from './components'
 import { useDispatch } from 'react-redux'
 import { SET_USER } from './context/actions/userActions'
 import { SET_PROJECTS } from './context/actions/projectActions'
+import OpenProject from './container/OpenProject'
 
 const App = () => {
   const navigate = useNavigate()
@@ -60,6 +61,8 @@ const App = () => {
             <Route path='/home/*' element={<Home />} />
 
             <Route path='/newProject' element={<NewProject/>} />
+
+            <Route path='/openProject/*' element={<OpenProject/>} />
     
             <Route path='*' element={<Navigate to={"/home"}/>} />
           </Routes>
