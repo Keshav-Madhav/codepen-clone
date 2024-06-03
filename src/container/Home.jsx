@@ -16,9 +16,9 @@ const Home = () => {
     <>
       <LeftNavbar user={user}/>
 
-      <div className='flex-1 min-h-screen max-h-screen h-full overflow-y-auto overflow-x-hidden flex flex-col items-start justify-start px-4 md:px-12 py-4 md:py-12'>
+      <div className='flex-1 min-h-screen max-h-screen h-full overflow-y-hidden overflow-x-hidden flex flex-col gap-4 items-start justify-start px-3 md:px-6 py-3 md:py-6'>
         <div className='w-full flex items-center justify-between gap-3'>
-        <div className='bg-secondary w-full flex items-center justify-center gap-2 px-4 py-1.5 rounded-md'>
+          <div className='bg-secondary w-full flex items-center justify-center gap-2 px-4 py-1.5 rounded-md'>
             <FaSearchengin className='text-primaryText text-2xl'/>
             <input 
               type="text" 
@@ -40,12 +40,10 @@ const Home = () => {
           )}
         </div>
 
-        <div className='w-full'>
-          <Routes>
-            <Route path='/*' element={<Projects/>}/>
-            <Route path='/auth' element={<SignUp/>}/>
-          </Routes>
-        </div>
+        <Routes>
+          <Route path='/*' element={<Projects/>}/>
+          <Route path='/auth' element={<SignUp/>}/>
+        </Routes>
       </div>
     </>
   )
