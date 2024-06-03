@@ -1,4 +1,4 @@
-import {useState} from 'react'
+import {useEffect, useState} from 'react'
 import { UserAuthInput } from '../components'
 import { FaEnvelope, FaGithub } from 'react-icons/fa6';
 import { MdPassword } from 'react-icons/md';
@@ -8,6 +8,8 @@ import { SignInWithGithub, SignInWithGoogle } from '../utils/helpers';
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../config/firebase.config';
 import { fadeInOut } from '../animation';
+import { useNavigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 
 const SignUp = () => {
   const [email, setEmail] = useState('');
@@ -16,12 +18,14 @@ const SignUp = () => {
   const [isLogin, setIsLogin] = useState(false);
   const [alert, setAlert] = useState(false)
   const [alertMessage, setAlertMessage] = useState('')
+  const user = useSelector(state => state.user?.user)
+  const navigate = useNavigate()
 
   const createNewUser = async () => {
     if(isEmailValid){
       await createUserWithEmailAndPassword(auth, email, password).then((userCred) => {
         if(userCred){
-          console.log(userCred)
+          navigate("/home/projects", {replace: true})
           setAlert(false)
         }
       }).catch((error) => {
@@ -48,6 +52,7 @@ const SignUp = () => {
     if(isEmailValid){
       await signInWithEmailAndPassword(auth, email, password).then((userCred) => {
         if(userCred){
+          navigate("/home/projects", {replace: true})
           setAlert(false)
         }
       }).catch((error) => {
@@ -70,6 +75,13 @@ const SignUp = () => {
       })
     }
   }
+
+  useEffect(() => {
+    if(user){
+      navigate("/home/projects", {replace: true})
+    }
+  }
+  , [user, navigate]);
 
   return (
     <div className='w-full py-6'>

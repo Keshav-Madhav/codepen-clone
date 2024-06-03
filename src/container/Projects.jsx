@@ -12,7 +12,7 @@ const Projects = () => {
       const filteredProjects = projects.filter(project => project.title.toLowerCase().includes(searchTerm.toLowerCase()))
       setFiltered(filteredProjects)
     }
-  }, [searchTerm])
+  }, [searchTerm, projects])
 
   return (
     <div className='w-full py-6 flex items-center justify-center gap-4 flex-wrap'>

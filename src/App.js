@@ -32,7 +32,7 @@ const App = () => {
     })
 
     return () => unsubscribe();
-  }, []);
+  }, [dispatch, navigate]);
 
   useEffect(() => {
     const projectQuery = query(
@@ -46,7 +46,7 @@ const App = () => {
     }))
 
     return () => unsubscribe()
-  }, [])
+  }, [dispatch])
 
   return (
     <>
