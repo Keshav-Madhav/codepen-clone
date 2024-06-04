@@ -12,13 +12,13 @@ import { UserProfileDetails } from '../components'
 import { doc, setDoc } from 'firebase/firestore'
 import { db } from '../config/firebase.config'
 import { Alert } from '../components'
+import { Link } from 'react-router-dom'
 
 const NewProject = () => {
   const [html, setHtml] = useState('<body>\n  <h1 class="hello">\n    Hello\n  </h1>\n</body>')
   const [css, setCss] = useState('body{\n  background-color: #181818\n} \n\n.hello{\n  color: #ffffff\n}')
   const [js, setJs] = useState('setTimeout(() => {\n  document.querySelector(".hello").style.color = "red"\n}, 2000) \n\nsetTimeout(() => {\n  document.querySelector(".hello").style.color = "green"\n}, 4000)')
   const [output, setOutput] = useState('')
-  const [isTitleEditable, setIsTitleEditable] = useState(true)
   const [isEditing, setIsEditing] = useState(false)
   const [title, setTitle] = useState('Untitled')
   const [ alert , setAlert ] = useState(false)
@@ -76,12 +76,14 @@ const NewProject = () => {
 
         <div className='h-[8%] w-full flex items-center justify-between px-12 py-4'>
           <div className='flex items-center justify-center gap-4'>
-            <img src='/logo.png' alt='logo' className='object-contain w-24 h-auto'/>
+            <Link to='/home/projects'>
+              <img src='/logo.png' alt='logo' className='object-contain w-24 h-auto'/>
+            </Link>
 
             <div className='flex items-start justify-start flex-col'>
               <div className='flex items-center justify-start gap-2'>
                 <AnimatePresence>
-                  {isTitleEditable && isEditing ? (
+                  {isEditing ? (
                     <motion.input 
                       key='input'
                       type="text" 
@@ -95,19 +97,17 @@ const NewProject = () => {
                   )}
                 </AnimatePresence>
 
-                {isTitleEditable && (
-                  <AnimatePresence>
-                    {isEditing ? (
-                      <motion.div key="MdCheck" whileTap={{scale: 0.9}} className='cursor-pointer' onClick={()=> setIsEditing(false)}>
-                        <MdCheck className='text-emerald-500 text-md'/>
-                      </motion.div>
-                    ):(
-                      <motion.div key="MdEdit" whileTap={{scale: 0.9}} className='cursor-pointer' onClick={()=> setIsEditing(true)}>
-                        <MdEdit className='text-primaryText text-md'/>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-                )}
+                <AnimatePresence>
+                  {isEditing ? (
+                    <motion.div key="MdCheck" whileTap={{scale: 0.9}} className='cursor-pointer' onClick={()=> setIsEditing(false)}>
+                      <MdCheck className='text-emerald-500 text-md'/>
+                    </motion.div>
+                  ):(
+                    <motion.div key="MdEdit" whileTap={{scale: 0.9}} className='cursor-pointer' onClick={()=> setIsEditing(true)}>
+                      <MdEdit className='text-primaryText text-md'/>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </div>
 
               <div className='flex items-center justify-start gap-2 px-2'>

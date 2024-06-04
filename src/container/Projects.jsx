@@ -43,7 +43,7 @@ const ProjectCard = ({ project, index }) => {
       initial={{opacity: 0, y: 30}}
       animate={{opacity: 1, y: 0}}
       exit={{opacity: 0, y: 30}}
-      onClick={() => navigate(`/home/openProject/${project.id}`)}
+      onClick={() => navigate(`/openProject/${project.id}`)}
     >
       <div className='bg-primary w-full h-full rounded-md overflow-hidden' style={{overflow:"hidden", height:"100%"}}>
         <iframe

@@ -62,7 +62,7 @@ const App = () => {
 
             <Route path='/newProject' element={<NewProject/>} />
 
-            <Route path='/openProject/*' element={<OpenProject/>} />
+            <Route path='/openProject/:id' element={<OpenProject/>} />
     
             <Route path='*' element={<Navigate to={"/home"}/>} />
           </Routes>

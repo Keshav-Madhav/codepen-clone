@@ -12,18 +12,21 @@ import { UserProfileDetails } from '../components'
 import { doc, setDoc } from 'firebase/firestore'
 import { db } from '../config/firebase.config'
 import { Alert } from '../components'
+import { Link, useParams } from 'react-router-dom'
 
 const OpenProject = () => {
+  const { id } = useParams()
+  const projects = useSelector(state => state.projects?.projects)
+  const currUSer = useSelector(state => state.user?.user)
   const [html, setHtml] = useState('<body>\n  <h1 class="hello">\n    Hello\n  </h1>\n</body>')
   const [css, setCss] = useState('body{\n  background-color: #181818\n} \n\n.hello{\n  color: #ffffff\n}')
   const [js, setJs] = useState('setTimeout(() => {\n  document.querySelector(".hello").style.color = "red"\n}, 2000) \n\nsetTimeout(() => {\n  document.querySelector(".hello").style.color = "green"\n}, 4000)')
   const [output, setOutput] = useState('')
-  const [isTitleEditable, setIsTitleEditable] = useState(true)
+  const [isEditable, setIsEditable] = useState(true)
   const [isEditing, setIsEditing] = useState(false)
   const [title, setTitle] = useState('Untitled')
   const [ alert , setAlert ] = useState(false)
-
-  const user = useSelector(state => state.user?.user)
+  const [project, setProject] = useState(null)
 
   const runCode = () => {
     const combinedCode = `
@@ -43,26 +46,43 @@ const OpenProject = () => {
     runCode()
   }, [html, css, js])
 
-  const saveCode = async() => {
-    const id = `${Date.now()}${Math.floor(Math.random() * 1000)}`
-    const _doc = {
-      id: id,
-      title: title,
-      html: html,
-      css: css,
-      js: js,
-      output: output,
-      user: user
+  useEffect(() => {
+    if (projects && projects.length > 0) {
+      const project = projects.find(project => project.id === id)
+      if (project) {
+        setTitle(project.title)
+        setHtml(project.html)
+        setCss(project.css)
+        setJs(project.js)
+        setOutput(project.output)
+        setProject(project)
+        setIsEditable(currUSer?.uid === project.user?.uid)
+        console.log(project)
+      }
     }
+  }, [projects, id, currUSer]) 
 
-    await setDoc(doc(db, 'Projects', id), _doc).then((res)=> {
-      setAlert(true)
-      setInterval(()=> {
-        setAlert(false)
-      }, 3000)
-    }).catch((err)=> {
-      console.log(err)
-    })
+  const saveCode = async() => {
+    if(project){
+      const _doc = {
+        id: project.id,
+        title: title,
+        html: html,
+        css: css,
+        js: js,
+        output: output,
+        user: project.user
+      }
+  
+      await setDoc(doc(db, 'Projects', project.id), _doc).then((res)=> {
+        setAlert(true)
+        setInterval(()=> {
+          setAlert(false)
+        }, 3000)
+      }).catch((err)=> {
+        console.log(err)
+      })
+    }
   }
 
   return (
@@ -76,12 +96,14 @@ const OpenProject = () => {
 
         <div className='h-[8%] w-full flex items-center justify-between px-12 py-4'>
           <div className='flex items-center justify-center gap-4'>
-            <img src='/logo.png' alt='logo' className='object-contain w-24 h-auto'/>
+            <Link to='/home/projects'> 
+              <img src='/logo.png' alt='logo' className='object-contain w-24 h-auto'/>
+            </Link>
 
             <div className='flex items-start justify-start flex-col'>
               <div className='flex items-center justify-start gap-2'>
                 <AnimatePresence>
-                  {isTitleEditable && isEditing ? (
+                  {isEditable && isEditing ? (
                     <motion.input 
                       key='input'
                       type="text" 
@@ -95,7 +117,7 @@ const OpenProject = () => {
                   )}
                 </AnimatePresence>
 
-                {isTitleEditable && (
+                {isEditable && (
                   <AnimatePresence>
                     {isEditing ? (
                       <motion.div key="MdCheck" whileTap={{scale: 0.9}} className='cursor-pointer' onClick={()=> setIsEditing(false)}>
@@ -112,7 +134,7 @@ const OpenProject = () => {
 
               <div className='flex items-center justify-start gap-2 px-2'>
                 <p className='text-primaryText text-xs'>
-                  {user?.displayName || user?.email.split('@')[0] || "Guest"}
+                  {project?.user?.displayName || project?.user?.email.split('@')[0] || "Guest"}
                 </p>
                 <motion.p whileTap={{scale:0.9}} className='text-[10px] bg-emerald-500 rounded-sm px-1 pt-[1px] text-primary font-medium cursor-pointer'>
                   + Follow
@@ -121,20 +143,22 @@ const OpenProject = () => {
             </div>
           </div>
 
-          {user && (
+          {project?.user && (
               <div className='flex items-center justify-center gap-3'>
-                <motion.button onClick={saveCode} whileTap={{scale:0.9}} className='px-3 py-1.5 bg-primaryText cursor-pointer text-sm text-primary font-medium rounded-lg'>
-                  Save
-                </motion.button>
+                {isEditable && (
+                  <motion.button onClick={saveCode} whileTap={{scale:0.9}} className='px-3 py-1.5 bg-primaryText cursor-pointer text-sm text-primary font-medium rounded-lg'>
+                    Save
+                  </motion.button>
+                )}
 
-                <UserProfileDetails user={user}/>
+                <UserProfileDetails user={currUSer}/>
               </div>
             )}
         </div>
 
         <div className='h-[92%] relative'>
           <SplitPane split="horizontal" minSize="10%" maxSize="80%" initialSize="40%" className='w-screen height-[90%]'>
-            <SplitPane initialSize="50%" minSize="200" maxSize="80%" className='border-b border-white/50'>
+            <SplitPane initialSize="20%" minSize="150" maxSize="80%" className='border-b border-white/50'>
               <div minSize="200" maxSize="60%" className='w-full h-full flex flex-col items-start justify-start border-r border-white/50'>
                 <div className='w-full flex items-center justify-between'>
                   <div className='bg-secondary px-4 py-2 border-t-4 border-t-gray-500 flex items-center justify-center gap-2'>
@@ -157,6 +181,7 @@ const OpenProject = () => {
                     onChange={(value, viewUpdate)=> setHtml(value)}
                     theme={"dark"}
                     selection={EditorSelection.cursor(0, 0)}
+                    readOnly={!isEditable}
                   />
                 </div>
               </div>
@@ -182,6 +207,7 @@ const OpenProject = () => {
                     extensions={[javascript({jsx:true}), EditorView.lineWrapping]}
                     onChange={(value, viewUpdate)=> setCss(value)}
                     theme={"dark"}
+                    readOnly={!isEditable}
                   />
                 </div>
               </div>
@@ -207,6 +233,7 @@ const OpenProject = () => {
                     extensions={[javascript({jsx:true}), EditorView.lineWrapping]}
                     onChange={(value, viewUpdate)=> setJs(value)}
                     theme={"dark"}
+                    readOnly={!isEditable}
                   />
                 </div>
               </div>

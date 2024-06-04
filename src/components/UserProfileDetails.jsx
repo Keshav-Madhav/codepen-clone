@@ -11,7 +11,7 @@ const UserProfileDetails = ({user}) => {
   return (
     <div className='flex items-center justify-center gap-4 relative'>
       <div className='w-11 h-11 flex items-center justify-center rounded-lg overflow-hidden cursor-pointer bg-emerald-500'>
-        {user.photoURL ? (
+        {user.photoURL !== null ? (
           <motion.img whileHover={{scale: 1.2}} src={user.photoURL} alt={user.displayName} className='object-cover w-full h-full' referrerPolicy='no-policy'/>
         ):(
           <p className='text-white text-xl font-semibold capitalize'>{(user.displayName || user.email).charAt(0)}</p>
