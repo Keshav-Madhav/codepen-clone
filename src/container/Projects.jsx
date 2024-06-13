@@ -4,6 +4,9 @@ import { motion } from 'framer-motion'
 import { useNavigate } from 'react-router-dom'
 import { FaThumbsDown } from 'react-icons/fa6'
 import { FaThumbsUp } from 'react-icons/fa6'
+import { doc, setDoc } from 'firebase/firestore'
+import { db } from '../config/firebase.config'
+import { toast } from 'sonner'
 
 const Projects = () => {
   const projects = useSelector(state => state.projects?.projects)
@@ -28,12 +31,78 @@ const Projects = () => {
 
 const ProjectCard = ({ project, index }) => {
   const navigate = useNavigate()
+  const currUser = useSelector(state => state.user?.user)
 
   const handleUpVote = (e) => {
     e.stopPropagation();
+    if(currUser){
+      if(project.likes.includes(currUser.uid)){
+        const newLikes = project.likes.filter(like => like !== currUser.uid)
+        const _doc = {
+          ...project,
+          likes: newLikes,
+        }
+        setDoc(doc(db, 'Projects', project.id), _doc).then((res)=> {
+          toast.success(`You have unliked ${project.title}`)
+        }).catch((err)=> {
+          toast.error('Error while unliking the project')
+          console.log(err)
+        })
+      }
+      else {
+        const newLikes = [...project.likes, currUser.uid]
+        const newDislikes = project.dislikes.filter(dislike => dislike !== currUser.uid)
+        const _doc = {
+          ...project,
+          likes: newLikes,
+          dislikes: newDislikes,
+        }
+        setDoc(doc(db, 'Projects', project.id), _doc).then((res)=> {
+          toast.success(`You have liked ${project.title}`)
+        }).catch((err)=> {
+          toast.error('Error while liking the project')
+          console.log(err)
+        })
+      }
+    }
   }
+
   const handleDownVote = (e) => {
     e.stopPropagation();
+    if(currUser){
+      if(project.dislikes.includes(currUser.uid)){
+        const newDislikes = project.dislikes.filter(dislike => dislike !== currUser.uid)
+        const _doc = {
+          ...project,
+          dislikes: newDislikes,
+        }
+        setDoc(doc(db, 'Projects', project.id), _doc).then((res)=> {
+          toast.success(`You have removed dislike from ${project.title}`)
+        }).catch((err)=> {
+          toast.error('Error while removing dislike from the project',{
+            description: "This action has removed your dislike from the project if you disliked it before."
+          })
+          console.log(err)
+        })
+      }
+      else {
+        const newDislikes = [...project.dislikes, currUser.uid]
+        const newLikes = project.likes.filter(like => like !== currUser.uid)
+        const _doc = {
+          ...project,
+          dislikes: newDislikes,
+          likes: newLikes,
+        }
+        setDoc(doc(db, 'Projects', project.id), _doc).then((res)=> {
+          toast.success(`You have disliked ${project.title}`,{
+            description: "This action has removed your like from the project if you liked it before."
+          })
+        }).catch((err)=> {
+          toast.error('Error while disliking the project',{})
+          console.log(err)
+        })
+      }
+    }
   }
 
   return (
