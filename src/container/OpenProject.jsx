@@ -11,8 +11,8 @@ import { useSelector } from 'react-redux'
 import { UserProfileDetails } from '../components'
 import { doc, setDoc } from 'firebase/firestore'
 import { db } from '../config/firebase.config'
-import { Alert } from '../components'
 import { Link, useParams } from 'react-router-dom'
+import { toast } from 'sonner'
 
 const OpenProject = () => {
   const { id } = useParams()
@@ -25,7 +25,6 @@ const OpenProject = () => {
   const [isEditable, setIsEditable] = useState(true)
   const [isEditing, setIsEditing] = useState(false)
   const [title, setTitle] = useState('Untitled')
-  const [ alert , setAlert ] = useState(false)
   const [project, setProject] = useState(null)
 
   const runCode = () => {
@@ -71,14 +70,13 @@ const OpenProject = () => {
         css: css,
         js: js,
         output: output,
-        user: project.user
+        user: project.user,
+        likes: project.likes,
+        dislikes: project.dislikes,
       }
   
       await setDoc(doc(db, 'Projects', project.id), _doc).then((res)=> {
-        setAlert(true)
-        setInterval(()=> {
-          setAlert(false)
-        }, 3000)
+        toast.success('Project Updated Successfully')
       }).catch((err)=> {
         console.log(err)
       })
@@ -88,12 +86,6 @@ const OpenProject = () => {
   return (
     <>
       <div className='w-screen h-screen flex flex-col items-start justify-start overflow-hidden'>
-        <AnimatePresence>
-          {alert && (
-            <Alert status="success" alertMsg="Project Saved Successfully!" />
-          )}
-        </AnimatePresence>
-
         <div className='h-[8%] w-full flex items-center justify-between px-12 py-4'>
           <div className='flex items-center justify-center gap-4'>
             <Link to='/home/projects'> 
